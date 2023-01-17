@@ -15,6 +15,12 @@ async def find_all_users():
     return users_entities_schema(conn.local.user.find())
 
 
+@user_route.get("/{id}")
+async def find_user_by_id(id: str):
+    """find user by id"""
+    return user_schema(conn.local.user.find_one({"_id": ObjectId(id)}))
+
+
 @user_route.post("/create")
 async def create_user(user: User):
     """create new user"""
@@ -27,3 +33,9 @@ async def update_user(id: str, user: User):
     """update user"""
     conn.local.user.find_one_and_update({"_id": ObjectId(id)}, {"$set": dict(user)})
     return user_schema(conn.local.user.find_one({"_id": ObjectId(id)}))
+
+
+@user_route.delete("/delete/{id}")
+async def delete_user(id: str):
+    """delete user"""
+    return user_schema(conn.local.user.find_one_and_delete({"_id": ObjectId(id)}))
